@@ -1,0 +1,134 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Oshannus · The Tide Shrine</title><meta name="description" content="Defend the sixth mana gate in an illustrated turn-based battle. Shield against the shrine guardian, then strike its exposed core."><link rel="stylesheet" href="style.css"></head><body class="in-prologue"><section id="intro" class="intro" aria-label="Oshannus prologue">
+
+  <div class="intro-backdrop" aria-hidden="true"></div><div class="intro-stars" aria-hidden="true"></div>
+
+  <div id="titleScreen" class="title-screen">
+
+    <p class="title-kicker">A TALE OF PRAETORIA</p>
+
+    <h1 class="title-logo">OSHANNUS</h1>
+
+    <p class="title-subtitle">THE RELUCTANT DEFENDER</p>
+
+    <div class="title-rule" aria-hidden="true">✦</div>
+
+    <p class="title-chapter">Chapter I <span>THE TIDE SHRINE</span></p>
+
+    <button id="continueJourney" class="begin-story" hidden>Continue journey →</button><p id="saveSummary" class="save-summary" hidden></p><button id="beginStory" class="begin-story">Begin the story <span>→</span></button>
+
+    <p class="title-footnote">The sixth gate awaits.</p>
+
+  </div>
+
+  <div id="storyScreen" class="story-screen" hidden>
+
+    <div class="crawl-space"><div class="crawl-plane"><article id="storyCrawl" class="crawl-copy" aria-label="Chapter one story">
+
+      <p class="crawl-chapter">CHAPTER I</p><h2>The Tide Shrine</h2>
+
+      <p>Chaos has reached Praetoria.</p>
+
+      <p>Bound by Planet to protect the sixth mana gate, Djinn Oshannus keeps a watch he never asked to bear.</p>
+
+      <p>Now a darkness moves through the waters of an ancient shrine. Its stone guardian, once a protector, has turned against the very gate it was made to defend.</p>
+
+      <p>Oshannus follows the troubled tide. He must break the corruption without destroying the guardian—or the shrine beneath its feet.</p>
+
+      <p>As he enters the flooded courtyard, cyan light burns within the sentinel’s chest. A stone spear rises from the water.</p>
+
+      <p class="crawl-last">The reluctant defender raises his hands.<br>The tide answers.</p>
+
+    </article></div></div>
+
+    <div class="crawl-controls"><button id="pauseStory" class="quiet">Ⅱ Pause</button><button id="skipStory">Enter battle →</button></div>
+
+  </div>
+
+  <div id="introFade" class="intro-fade" aria-hidden="true"></div>
+
+</section>
+
+<section id="journeyScreen" class="journey-screen" hidden aria-label="Between chapters">
+
+  <div class="journey-art" aria-hidden="true"></div><article class="journey-card">
+
+    <div id="journeyStory"><p class="eyebrow">CHAPTER I COMPLETE</p><h1>The water remembers</h1>
+
+    <p>The guardian lowers its spear. Violet light drains from its stone, leaving the shrine intact.</p>
+
+    <p>In the settling water, Oshannus sees a trail of corruption flowing toward the broken causeway. This was no isolated disturbance.</p>
+
+    <p>He gathers the returning current around his wounds. It eases the pain, but cannot erase it.</p>
+
+    </div><div class="recovery"><span>HEALTH <b id="recoveryHp"></b></span><span>MANA <b>8 / 8</b></span></div>
+
+    <div class="new-power"><span class="eyebrow">A POWER REFINED · RIPTIDE</span><p>A hooked current that pulls an enemy off balance. Costs 3 mana.</p></div>
+
+    <p class="next-threat"><b>Ahead: Chaos Riftblade</b><br>A masked figure waits among the broken arches. Its reflection moves against the current, and its blade leaves a violet scar in the air.</p>
+
+    <fieldset id="respiteChoices" class="respite-choices" hidden><legend>Choose a power to carry forward</legend>
+<label><input type="radio" name="upgrade" value="rising"><span><b>Rising Tide</b><small>Surging Wave gathers greater force. Turn your opening into a stronger attack.</small></span></label>
+<label><input type="radio" name="upgrade" value="sheltering"><span><b>Sheltering Current</b><small>Water Shield mends your wounds when it withstands an attack.</small></span></label>
+<p>This power stays with you for the rest of the journey.</p></fieldset>
+<fieldset id="springChoices" class="respite-choices" hidden><legend>How will you use the spring?</legend>
+<label><input type="radio" name="spring" value="drink"><span><b>Drink from the spring</b><small>Recover more health now.</small><strong id="drinkHealth"></strong></span></label>
+<label><input type="radio" name="spring" value="blessing"><span><b>Carry its blessing</b><small>Enter with lighter recovery. Renewing Tide restores 24 health in the Sanctuary, once.</small><strong id="blessingHealth"></strong></span></label>
+<p>Mana refills and Renewing Tide refreshes with either choice. Your earlier power remains.</p><p id="springPresence"></p></fieldset>
+<fieldset id="gateChoices" class="respite-choices" hidden><legend>What will you carry below?</legend>
+<label><input type="radio" name="gateRest" value="rest"><span><b>Rest in the quiet</b><small>Let the freed spirits mend every wound.</small><strong>40 / 40 health on entry</strong></span></label>
+<label><input type="radio" name="gateRest" value="resolve"><span><b>Gather your resolve</b><small>Recover some health now. When the outer binding breaks, restore up to 12 health and 2 mana.</small><strong id="resolveHealth"></strong></span></label>
+<p>Both choices refill mana and refresh Renewing Tide. Your earlier power remains; the spring blessing has fulfilled its purpose.</p></fieldset>
+<fieldset id="finalChoices" class="respite-choices" hidden><legend>Refine one final current</legend>
+<label><input type="radio" name="finalPower" value="breaker"><span><b>Tidebreaker</b><small>Riptide tears more deeply through Void Armour. Returns 2 mana when it strikes armour. Extra force affects armour only.</small></span></label>
+<label><input type="radio" name="finalPower" value="renewal"><span><b>Enduring Tide</b><small>Use Renewing Tide twice in the final battle. Each use still costs 3 mana and a turn.</small></span></label>
+<p>Health and mana fully restored. Your earlier upgrade remains. Renova's gift can still find you only once in the journey.</p></fieldset>
+<button id="nextChapter" class="begin-story">Follow the current →</button><p class="save-summary">Checkpoint saved · return whenever you’re ready.</p>
+
+  </article>
+
+</section><main class="game" id="battleGame" hidden inert><header><div class="chapter">PRAETORIA <span id="chapterLabel">CHAPTER I · THE SIXTH GATE</span></div><h1 id="battleTitle">The Tide Shrine</h1><div class="tools"><button id="returnTitle" class="quiet">Title</button><button id="watch">▶ Watch battle</button><button id="restart" class="quiet">↻ Restart</button></div></header>
+
+<section class="arena" aria-label="Flooded shrine battlefield"><div class="scene" id="scene"></div><div class="shade"></div><div id="mirrorSprite" class="sprite enemy-sprite mirror-sprite" data-pose="idle" aria-hidden="true" hidden></div>
+
+<div class="sprite hero-sprite" id="heroSprite" data-pose="idle" aria-hidden="true">
+
+<div class="sprite-frame idle" style="aspect-ratio:580/887"><img src="assets/oshannus-poses.png" alt="" style="width:305.862%;left:0"></div>
+
+<div class="sprite-frame attack" style="aspect-ratio:640/887"><img src="assets/oshannus-poses.png" alt="" style="width:277.188%;left:-90.625%"></div>
+
+<div class="sprite-frame hurt" style="aspect-ratio:564/887"><img src="assets/oshannus-poses.png" alt="" style="width:314.539%;left:-214.539%"></div>
+
+</div>
+
+<div class="sprite enemy-sprite" id="enemySprite" data-pose="idle" aria-hidden="true">
+
+<div class="sprite-frame idle" style="aspect-ratio:550/768"><img src="assets/guardian-poses.png" alt="" style="width:372.364%;left:0"></div>
+
+<div class="sprite-frame attack" style="aspect-ratio:990/768"><img src="assets/guardian-poses.png" alt="" style="width:206.869%;left:-52.525%"></div>
+
+<div class="sprite-frame hurt" style="aspect-ratio:538/768"><img src="assets/guardian-poses.png" alt="" style="width:380.669%;left:-280.669%"></div>
+
+</div>
+
+<div class="healing enemy-healing" id="enemyHealing" aria-hidden="true"><i></i><i></i><i></i></div><div class="healing" id="healing" aria-hidden="true"><i></i><i></i><i></i><b>✦</b><b>✧</b><b>✦</b><b>✧</b></div><div class="combatant hero"><div class="name"><span>DJINN OSHANNUS</span><span id="heroHp">40 / 40</span></div><div class="bar"><i id="heroBar"></i></div><div class="mana"><span>◉ MANA</span><span id="mana">8 / 8</span></div><div class="mana-bar"><i id="manaBar"></i></div></div><div class="combatant enemy"><div class="name"><span id="enemyName">SHRINE GUARDIAN</span><span id="enemyHp">96 / 96</span></div><div class="bar"><i id="enemyBar"></i></div><div id="voidArmor" class="void-armor" hidden><div><span>VOID ARMOUR</span><span id="armorValue"></span></div><div class="armor-bar"><i id="armorBar"></i></div></div><div class="intent" id="intent">The guardian draws back its arm</div></div>
+
+<div class="turn"><span id="turn">TURN 01</span><b id="mode">YOUR MOVE</b></div><div id="shield" class="shield"></div><div id="core" class="core"></div><div id="effect" class="effect"></div><div id="heroNumber" class="number hero-number"></div><div id="enemyNumber" class="number enemy-number"></div><div id="announcement" class="announcement" aria-live="polite"></div><div class="objective" id="objective"><span>✦</span> Subdue the guardian. Preserve the shrine.</div>
+
+<div id="result" class="result" hidden><div class="result-card"><div class="eyebrow" id="resultEyebrow"></div><h2 id="resultTitle"></h2><p id="resultText"></p><button id="retry">Fight again</button></div></div></section>
+
+<section class="command"><div class="guidance"><div><span class="eyebrow">BOUND BY PLANET</span><p id="hint">The shrine is corrupted. Read the guardian’s intent before you act.</p></div><span id="autonote">Choose an action · keys 1–4</span></div><p id="enemyDefense" class="enemy-defense" hidden></p><div class="actions">
+
+<button data-action="strike"><span class="action-top"><span class="glyph">↗</span><span class="cost">+2 MANA</span></span><strong>1 <span>Tidal Strike</span></strong><small id="strikeRange">A steady attack that restores mana</small></button>
+
+<button data-action="shield"><span class="action-top"><span class="glyph">◈</span><span class="cost">2 MANA</span></span><strong>2 <span>Water Shield</span></strong><small>A wall of water to soften incoming blows</small></button>
+
+<button data-action="wave"><span class="action-top"><span class="glyph">≋</span><span class="cost">4 MANA</span></span><strong>3 <span>Surging Wave</span></strong><small id="waveRange">A powerful surge of water</small></button>
+
+<button data-action="relic"><span class="action-top"><span class="glyph">✧</span><span class="cost" id="relicCost">3 MANA · ONCE</span></span><strong>4 <span>Renewing Tide</span></strong><small>Restore 14 health · uses your turn</small></button><button id="interruptButton" data-action="interrupt" hidden><span class="action-top"><span class="glyph">⤨</span><span class="cost">3 MANA</span></span><strong>5 <span>Riptide</span></strong><small>A hooked current that pulls foes off balance</small></button></div><div class="journal"><span>BATTLE LOG</span><p id="log" aria-live="polite">A stone sentinel stirs beneath the water. Oshannus raises his hands.</p></div></section><footer><span>OSHANNUS <i>·</i> THE RELUCTANT DEFENDER</span><span id="checkpointNote">Checkpoints save on this device.</span></footer></main><div id="renovaCameo" class="renova-cameo" role="dialog" aria-modal="true" aria-labelledby="renovaTitle" hidden><article><img src="assets/renova.png" alt="Djinn Renova reaches out through a turquoise healing current"><div><p class="eyebrow">DJINN RENOVA</p><h2 id="renovaTitle">A saving grace</h2><p class="renova-quote">“Not yet, Oshannus. Your tide has not turned.”</p><p>Warm light catches you before the darkness can. Your wounds close, and a little power returns.</p><p class="renova-gift">18 health restored · a spark of mana rekindled</p><p>Her presence fades. This gift can find you only once on this journey.</p><button id="acceptGrace">Rise with the tide</button></div></article></div><div id="gateOath" class="gate-oath" role="dialog" aria-modal="true" aria-labelledby="oathTitle" hidden><article><p class="eyebrow">PHASE II - THE TRUE BINDING</p><h2 id="oathTitle">Beyond the binding</h2><p>The outer armor breaks. The chains sink deeper into the sixth gate. Muirat is drawing its current toward a Chaos breach, using the captive spirits as anchors.</p><p>Beyond the breach, Oshannus glimpses the homes and lives the gate protects. Muirat is drawing something toward them: something far greater than the warden.</p><blockquote>“Planet bound me here. But if this gate falls, they pay the price. I will not let that happen.”</blockquote><p id="oathGift"></p><button id="acceptOath">Stand against the breach</button></article></div><script type="module" src="game.mjs"></script></body></html>
+
+
+
+
+
+
+
