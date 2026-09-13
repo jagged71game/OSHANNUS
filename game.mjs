@@ -33,7 +33,7 @@ function render() {
   document.querySelector('.game').classList.toggle('gate-unbound', state.chapter === 5 && state.bossStage === 2);
   document.querySelector('.game').classList.toggle('chapter-six', state.chapter === 6);
   const deceptive = state.chapter === 2 || state.chapter === 5 && state.bossStage === 1;
-  $('chapterLabel').textContent = c.subtitle + (state.difficulty === 'hard' ? ' · HARD PREVIEW' : ' · NORMAL');
+  $('chapterLabel').textContent = c.subtitle + (state.difficulty === 'hard' ? (state.chapter === 1 ? ' · HARD' : ' · HARD PREVIEW') : ' · NORMAL');
 
   $('battleTitle').textContent = c.title;
   document.querySelector('.guidance .eyebrow').textContent = (state.chapter === 6 || state.chapter === 5 && state.bossStage === 2) ? 'BY HIS OWN CHOICE' : 'BOUND BY PLANET';
@@ -120,6 +120,12 @@ function render() {
     $('enemyDefense').textContent = (state.phase === 'exposed' || state.fieldFractured ? 'Forcefield dimmed' : 'Forcefield raised') + (state.armor ? ' - Void Armour intact' : ' - Void Armour broken') + (state.awakened ? ' - The Nightmare rises' : '');
     $('intent').textContent = state.phase === 'heavy' ? 'Muirat advances. Cracks race across the floor...' : state.phase === 'exposed' ? 'The ghost fades. His Forcefield dims...' : 'Shadows coil as the skull throne trembles...';
     $('hint').textContent = state.phase === 'heavy' ? 'Each footfall shakes the palace. A wall of water could keep you steady.' : state.phase === 'exposed' ? 'The violet ring falls quiet. Bone fragments begin to gather around him.' : state.awakened ? '“I have bent emperors to my will. You will kneel.”' : '“A gatekeeper who mistakes duty for freedom. How easily Planet bought you.”';
+  }
+  const hardGuardian = state.chapter === 1 && state.difficulty === 'hard';
+  $('enemySprite').classList.toggle('quake-ready', hardGuardian && state.phase === 'heavy' && state.hardMove === 'quake');
+  if(hardGuardian) {
+    $('intent').textContent = state.phase === 'heavy' ? (state.hardMove === 'quake' ? 'Both fists lower. Tremors spread beneath you...' : 'One arm rises high. Stone locks into place...') : state.phase === 'exposed' ? 'Its chest parts. The core shines through...' : 'Its arm sweeps low across the water...';
+    $('hint').textContent = state.phase === 'heavy' ? (state.hardMove === 'quake' ? 'The coming tremor could break your concentration. Water can steady you.' : 'The raised fist casts a shadow across the shrine.') : state.phase === 'exposed' ? 'A brief opening. The guardian may charge again as soon as it recovers.' : 'Watch its stance. A second sweep may follow the first.';
   }
   $('enemySprite').classList.toggle('muirat-fury', state.chapter === 6 && state.awakened);
   $('enemySprite').classList.toggle('forcefield-raised', state.chapter === 6 && state.phase !== 'exposed' && !state.fieldFractured && state.status === 'playing');
@@ -245,7 +251,8 @@ async function act(action) {
   if (state.chapter === 3) announce(state.interrupted ? 'The inscription breaks' : phase === 'heavy' ? 'Keeper - Memory Collapse' : phase === 'gathering' ? 'Keeper - Devouring Tendrils' : 'The keeper transcribes');
   if (!gateBreak && phase !== 'exposed' && !state.interrupted) { pose('enemy', 'attack'); effect((state.chapter === 3 || state.chapter === 5 && state.bossStage === 2) && phase === 'gathering' ? 'tendrils' : phase === 'heavy' ? 'heavy' : 'hit'); }
 
-  if (state.chapter === 6 && phase === 'heavy') effect('earthquake');
+  if (state.chapter === 1 && state.difficulty === 'hard') announce(phase === 'heavy' ? (state.hardMove === 'quake' ? 'Guardian - Seismic Slam' : 'Guardian - Crushing Fist') : phase === 'exposed' ? 'The guardian recovers' : 'Guardian - Stone Sweep');
+  if ((state.chapter === 6 || state.chapter === 1 && state.difficulty === 'hard' && state.hardMove === 'quake') && phase === 'heavy') effect('earthquake');
   await sleep(650); if (token !== epoch) return;
 
   const enemy = enemyTurn(state); state = enemy.state;
@@ -273,6 +280,7 @@ async function act(action) {
     if (enemy.event.consumedSpirit) effect('spirit-consume');
   }
   if (state.chapter === 6) log(phase === 'exposed' ? `Muirat gathers ${enemy.event.armorRestored} Void Armour from the bone-littered floor. His Forcefield rises again.` : `Oshannus takes ${enemy.event.damage} damage.${enemy.event.blocked ? ' Water Shield absorbs the tremor and keeps Oshannus steady.' : ''}${enemy.event.disrupted ? ' The spell strikes with weakened force.' : ''}`);
+  if (state.chapter === 1 && state.difficulty === 'hard') log(phase === 'exposed' ? 'The core closes. Watch the stance it takes next.' : `Oshannus takes ${enemy.event.damage} damage.${enemy.event.blocked ? ' Water Shield holds him steady.' : ''} ${state.phase === 'exposed' ? 'The core opens.' : 'The guardian shifts its stance.'}`);
   if (enemy.event.enemyHeal) {
     number('enemy', '+' + enemy.event.enemyHeal, true);
     $('enemyHealing').classList.remove('on'); void $('enemyHealing').offsetWidth; $('enemyHealing').classList.add('on');
@@ -304,7 +312,7 @@ async function act(action) {
   if (enemy.event.stunned) {
     announce('STUNNED - opening lost'); pose('hero','hurt');
     $('heroSprite').classList.add('stunned');
-    log(`The earthquake breaks your concentration. Your next turn is lost; Muirat rebuilds ${enemy.event.armorRestored} Void Armour while you recover.`);
+    log(state.chapter === 1 ? 'The tremor breaks your concentration. Your next turn is lost; the guardian closes its core while you recover.' : `The earthquake breaks your concentration. Your next turn is lost; Muirat rebuilds ${enemy.event.armorRestored} Void Armour while you recover.`);
     await sleep(1800); if (token !== epoch) return;
     $('heroSprite').classList.remove('stunned'); pose('hero');
   }

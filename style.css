@@ -191,3 +191,4 @@ body.in-prologue{overflow:hidden}
 .difficulty-choice input{accent-color:#f6d18a;width:18px;height:18px}
 .difficulty-choice label:has(input:checked){color:#f6d18a}
 .difficulty-choice p{font-size:14px;line-height:1.5;color:#b9cdd5;margin:6px 0 0}
+.enemy-sprite.quake-ready{filter:drop-shadow(0 0 18px #ffcb78);transform:translateY(8px)}

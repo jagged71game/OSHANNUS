@@ -128,6 +128,8 @@ export function playerTurn(state, a, random = Math.random) {
 
 export function enemyTurn(state, random = Math.random) {
 
+  if (state.chapter === 1 && state.difficulty === 'hard') return hardGuardianTurn(state, random);
+
   const s = { ...state };
 
   if (s.status !== 'playing') return { state: s, event: null };
@@ -195,6 +197,30 @@ export function enemyTurn(state, random = Math.random) {
   if (awakenedNow) s.awakened = true;
   return { state: s, event: { earthquake, stunned, armorRestored, damage, baseRoll, echoRoll, drained, stolenHealth, enemyHeal, consumedSpirit, rescued, shieldHeal, awakenedNow, disrupted: state.disrupted, phase, blocked: state.shield, interrupted: state.interrupted } };
 
+}
+
+// Pick and store the next intent before the player chooses an action.
+// Sweeps are capped at two; every heavy blow grants a recovery opening.
+function hardGuardianTurn(state, random) {
+  const s = {...state};
+  if(s.status !== 'playing') return {state:s,event:null};
+  const phase = s.phase, quake = phase === 'heavy' && s.hardMove === 'quake';
+  const baseRoll = phase === 'exposed' ? 0 : roll(phase === 'heavy' ? (quake ? [16,21] : [19,25]) : [6,9],random);
+  const damage = state.shield ? Math.ceil(baseRoll*.2) : baseRoll;
+  s.hp = Math.max(0,s.hp-damage); s.mana = Math.min(8,s.mana+1);
+  s.shield=false; s.turn++;
+  const rescued = s.hp === 0 && !s.renovaUsed;
+  if(rescued){s.hp=18;s.mana=Math.min(8,s.mana+2);s.renovaUsed=true;}
+  else if(!s.hp) s.status='lost';
+  const stunned = quake && !state.shield && !rescued && s.status==='playing' && random()<.35;
+  if(phase==='heavy') {s.phase='exposed';s.sweepCount=0;}
+  else if(phase==='gathering') {
+    s.sweepCount=(s.sweepCount||0)+1;
+    s.phase=s.sweepCount<2 && random()<.4 ? 'gathering':'heavy';
+  } else {s.sweepCount=0;s.phase=random()<.4?'heavy':'gathering';}
+  if(stunned){s.phase='gathering';s.turn++;s.mana=Math.min(8,s.mana+1);}
+  s.hardMove=s.phase==='heavy' ? (random()<.5?'quake':'crush') : 'sweep';
+  return {state:s,event:{phase,baseRoll,damage,blocked:state.shield,rescued,stunned,earthquake:quake,echoRoll:0,armorRestored:0,interrupted:false}};
 }
 
 export function choose(s) {
