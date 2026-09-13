@@ -26,7 +26,9 @@ export const actions = {
 
 export function fresh(chapter = 1, hp = 40, journey = {}) {
 
-  return { finalPower: ['breaker','renewal'].includes(journey.finalPower) ? journey.finalPower : null, healCharges: chapter === 6 && journey.finalPower === 'renewal' ? 2 : 1, armor: chapter === 6 ? 28 : 0, fieldFractured: false, chapter, hp, mana: 8, enemy: chapters[chapter].hp, turn: 1, phase: 'gathering', relic: true, shield: false, status: 'playing', weaponBonus: 0, interrupted: false, mirror: chapter === 2 || chapter === 5, bossStage: 1, gateRest: ['rest', 'resolve'].includes(journey.gateRest) ? journey.gateRest : null, remembered: null, awakened: false, disrupted: false, consumed: 0, freed: 0, spiritFreed: false, respite: ['drink', 'blessing'].includes(journey.respite) ? journey.respite : null, upgrade: ['rising', 'sheltering'].includes(journey.upgrade) ? journey.upgrade : null, renovaUsed: journey.renovaUsed === true };
+  const difficulty = journey.difficulty === 'hard' ? 'hard' : 'normal';
+
+  return { difficulty, finalPower: ['breaker','renewal'].includes(journey.finalPower) ? journey.finalPower : null, healCharges: chapter === 6 && journey.finalPower === 'renewal' ? 2 : 1, armor: chapter === 6 ? 28 : 0, fieldFractured: false, chapter, hp, mana: 8, enemy: chapters[chapter].hp, turn: 1, phase: 'gathering', relic: true, shield: false, status: 'playing', weaponBonus: 0, interrupted: false, mirror: chapter === 2 || chapter === 5, bossStage: 1, gateRest: ['rest', 'resolve'].includes(journey.gateRest) ? journey.gateRest : null, remembered: null, awakened: false, disrupted: false, consumed: 0, freed: 0, spiritFreed: false, respite: ['drink', 'blessing'].includes(journey.respite) ? journey.respite : null, upgrade: ['rising', 'sheltering'].includes(journey.upgrade) ? journey.upgrade : null, renovaUsed: journey.renovaUsed === true };
 
 }
 
@@ -251,7 +253,7 @@ export function choose(s) {
 
 export function checkpoint(chapter, entryHp, stage = 'battle', hp = entryHp, journey = {}) {
 
-  return { version: 5, finalPower: journey.finalPower || null, gateRest: journey.gateRest || null, chapter, entryHp, stage, hp, respite: journey.respite || null, upgrade: journey.upgrade || null, renovaUsed: journey.renovaUsed === true };
+  return { version: 6, difficulty: journey.difficulty === 'hard' ? 'hard' : 'normal', finalPower: journey.finalPower || null, gateRest: journey.gateRest || null, chapter, entryHp, stage, hp, respite: journey.respite || null, upgrade: journey.upgrade || null, renovaUsed: journey.renovaUsed === true };
 
 }
 
@@ -261,7 +263,9 @@ export function readCheckpoint(raw) {
 
     const c = JSON.parse(raw);
 
-    if (![1, 2, 3, 4, 5].includes(c?.version) || ![1, 2, 3, 4, 5, 6].includes(c.chapter) || !['battle', 'aftermath', 'complete'].includes(c.stage)) return null;
+    if (![1, 2, 3, 4, 5, 6].includes(c?.version) || ![1, 2, 3, 4, 5, 6].includes(c.chapter) || !['battle', 'aftermath', 'complete'].includes(c.stage)) return null;
+    if (c.version < 6) c.difficulty = 'normal';
+    else if (!['normal', 'hard'].includes(c.difficulty)) return null;
 
     if (![c.entryHp, c.hp].every(n => Number.isInteger(n) && n >= 1 && n <= 40)) return null;
 

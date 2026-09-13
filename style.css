@@ -185,3 +185,9 @@ body.in-prologue{overflow:hidden}
 .chapter-six .muirat-frame{width:auto;height:100%;overflow:hidden}
 .chapter-six .muirat-frame img{height:100%;max-width:none;object-fit:fill;mix-blend-mode:normal;mask-image:none;top:0}
 @media(max-width:700px){.chapter-six .enemy-sprite{height:68%;width:60%;right:-5%;bottom:10%}.chapter-six .hero-sprite{height:54%}}
+.difficulty-choice{max-width:420px;border:1px solid #65818d;background:#071a24dd;padding:14px 20px;margin:0 0 20px;color:#ecf6f8;border-radius:8px}
+.difficulty-choice legend{font-size:14px;color:#f6d18a;padding:0 8px}
+.difficulty-choice label{display:inline-flex;align-items:center;gap:8px;padding:10px;font-size:16px;cursor:pointer}
+.difficulty-choice input{accent-color:#f6d18a;width:18px;height:18px}
+.difficulty-choice label:has(input:checked){color:#f6d18a}
+.difficulty-choice p{font-size:14px;line-height:1.5;color:#b9cdd5;margin:6px 0 0}

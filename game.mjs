@@ -5,6 +5,7 @@ const $ = id => document.getElementById(id);
 const buttons = [...document.querySelectorAll('[data-action]')];
 
 let state = fresh(), busy = false, auto = false, epoch = 0;
+let newDifficulty = 'normal';
 
 let screen = 'title', entryHp = 40, selectedUpgrade = null, selectedRespite = null, selectedGateRest = null, selectedFinalPower = null, gateResolve = null, graceResolve = null;
 
@@ -32,7 +33,7 @@ function render() {
   document.querySelector('.game').classList.toggle('gate-unbound', state.chapter === 5 && state.bossStage === 2);
   document.querySelector('.game').classList.toggle('chapter-six', state.chapter === 6);
   const deceptive = state.chapter === 2 || state.chapter === 5 && state.bossStage === 1;
-  $('chapterLabel').textContent = c.subtitle;
+  $('chapterLabel').textContent = c.subtitle + (state.difficulty === 'hard' ? ' · HARD PREVIEW' : ' · NORMAL');
 
   $('battleTitle').textContent = c.title;
   document.querySelector('.guidance .eyebrow').textContent = (state.chapter === 6 || state.chapter === 5 && state.bossStage === 2) ? 'BY HIS OWN CHOICE' : 'BOUND BY PLANET';
@@ -375,6 +376,7 @@ function beginStory() {
 
   if (saved && !window.confirm('Start a new journey? This replaces your saved checkpoint when you enter the shrine.')) return;
 
+  newDifficulty = document.querySelector('[name=difficulty]:checked').value;
   screen = 'story'; introEpoch++; crawlPaused = false;
 
   $('titleScreen').hidden = true; $('storyScreen').hidden = false;
@@ -415,7 +417,7 @@ async function enterBattle() {
 
   if (token !== introEpoch) return;
 
-  state = fresh(1); entryHp = 40; reset(); setEnemyArt(); saveProgress('battle');
+  state = fresh(1,40,{difficulty:newDifficulty}); entryHp = 40; reset(); setEnemyArt(); saveProgress('battle');
 
   screen = 'battle';
 
@@ -501,7 +503,7 @@ function updateContinue() {
 
   $('saveSummary').hidden = !saved;
 
-  if (saved) $('saveSummary').textContent = `${chapters[saved.chapter].title} · ${saved.stage === 'battle' ? 'battle checkpoint · ' + saved.entryHp + '/40 health' : saved.stage === 'aftermath' ? 'aftermath' : 'completed'} · this device`;
+  if (saved) $('saveSummary').textContent = `${chapters[saved.chapter].title} · ${saved.difficulty === 'hard' ? 'Hard preview' : 'Normal'} · ${saved.stage === 'battle' ? 'battle checkpoint · ' + saved.entryHp + '/40 health' : saved.stage === 'aftermath' ? 'aftermath' : 'completed'} · this device`;
 
   $('beginStory').textContent = saved ? 'Start a new journey →' : 'Begin the story →';
 
