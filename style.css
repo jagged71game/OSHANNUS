@@ -202,3 +202,14 @@ body{padding-bottom:50px}
 .audio-controls>div{max-height:calc(100dvh - 90px);overflow-y:auto}
 .audio-controls hr{width:100%;border:0;border-top:1px solid #638592;margin:0}
 .audio-controls small{font-size:12px;line-height:1.4;color:#b9cdd5}
+.intro:not(.show-story){overflow-y:auto}
+.intro .title-screen{padding-bottom:85px}
+.splinterlands-credit{width:100%;max-width:440px;margin:8px auto 0;padding:16px 20px;background:#071a24e8;border:1px solid #55747f;border-radius:8px;text-shadow:none;color:#d6e5ea;font-size:14px;line-height:1.6}
+.splinterlands-credit p{margin:0 0 10px}
+.splinterlands-credit a{color:#f4d496;text-decoration:underline;text-underline-offset:3px}
+.splinterlands-credit summary{cursor:pointer;color:#95eeec;font-size:15px}
+.splinterlands-credit details[open] summary{margin-bottom:12px}
+.splinterlands-credit details p{text-align:left}
+.splinterlands-credit small{display:block;color:#a9c0ca;font-size:12px;margin-top:10px}
+.splinterlands-credit a:focus-visible,.splinterlands-credit summary:focus-visible{outline:2px solid #f6d18a;outline-offset:4px}
+.splinterlands-visit{display:inline-block;padding:8px}
