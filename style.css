@@ -192,3 +192,10 @@ body.in-prologue{overflow:hidden}
 .difficulty-choice label:has(input:checked){color:#f6d18a}
 .difficulty-choice p{font-size:14px;line-height:1.5;color:#b9cdd5;margin:6px 0 0}
 .enemy-sprite.quake-ready{filter:drop-shadow(0 0 18px #ffcb78);transform:translateY(8px)}
+.audio-controls{position:fixed;right:12px;bottom:12px;z-index:10000;color:#e8f7ff;font-size:14px;text-shadow:none}
+.audio-controls summary{cursor:pointer;list-style:none;border:1px solid #638592;border-radius:6px;padding:10px 14px;background:#071d28;box-shadow:0 3px 12px #0007}
+.audio-controls>div{position:absolute;right:0;bottom:48px;width:220px;padding:16px;background:#071d28;border:1px solid #638592;border-radius:8px;display:grid;gap:12px;box-shadow:0 4px 20px #0008}
+.audio-controls button{padding:10px;font-size:14px;cursor:pointer;color:#e8f7ff;background:#173946;border:1px solid #638592;border-radius:4px}
+.audio-controls input{width:100%;accent-color:#7ed9e1}
+.audio-controls :focus-visible{outline:2px solid #f6d18a;outline-offset:3px}
+body{padding-bottom:50px}

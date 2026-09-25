@@ -1,4 +1,19 @@
 import { fresh, actions, allowed, playerTurn, enemyTurn, choose, chapters, checkpoint, readCheckpoint, nextChapter } from './battle.mjs';
+import { createSound } from './audio.mjs';
+
+const sound=createSound();
+const audioControls=document.createElement('details');
+audioControls.className='audio-controls';
+audioControls.innerHTML='<summary>Sound</summary><div><button id="soundToggle" type="button"></button><label for="soundVolume">Effects volume</label><input id="soundVolume" type="range" min="0" max="100" step="5"><button id="soundTest" type="button">Test sound</button></div>';
+document.body.append(audioControls);
+const soundToggle=document.getElementById('soundToggle'),soundVolume=document.getElementById('soundVolume');
+function renderSound(){soundToggle.textContent=sound.muted?'Unmute effects':'Mute effects';soundToggle.setAttribute('aria-pressed',String(sound.muted));soundVolume.value=Math.round(sound.volume*100);audioControls.querySelector('summary').textContent=sound.muted||sound.volume===0?'Sound: off':'Sound: on';}
+soundToggle.onclick=()=>{sound.unlock();sound.setMuted(!sound.muted);renderSound();};
+soundVolume.oninput=()=>{sound.setVolume(Number(soundVolume.value)/100);renderSound();};
+document.getElementById('soundTest').onclick=()=>{sound.unlock();sound.play('shield');};
+document.addEventListener('pointerdown',()=>sound.unlock(),{capture:true});
+document.addEventListener('keydown',()=>sound.unlock(),{capture:true});
+renderSound();
 
 const $ = id => document.getElementById(id);
 
@@ -163,11 +178,16 @@ function number(who, text, heal = false) {
 
 function effect(name) {
 
+  const cue={strike:'strike',wave:'wave',shield:'shield',interrupt:'interrupt','mirror-burst':'mirror','forcefield-burst':'block','memory-burst':'block','spirit-consume':'ghost'}[name];
+  if(cue)sound.play(cue);
+
   $('effect').className = 'effect'; void $('effect').offsetWidth; $('effect').className = 'effect ' + name;
 
 }
 
 function healing() {
+
+  sound.play('heal');
 
   $('healing').classList.remove('on'); void $('healing').offsetWidth; $('healing').classList.add('on');
 
@@ -176,7 +196,8 @@ function healing() {
 function log(text) { $('log').textContent = text; }
 
 function finish() {
-  busy = false; auto = false; const won = state.status === 'won';
+    busy = false; auto = false; const won = state.status === 'won';
+    sound.stop();sound.play(won?'victory':'defeat');
   pose(won ? 'enemy' : 'hero', 'hurt'); render();
   const endings = {
     1: ['Shrine awakened', 'The guardian settles, its stone unbroken. Beyond the courtyard, a violet current points toward the broken causeway.'],
@@ -256,6 +277,7 @@ async function act(action) {
   await sleep(650); if (token !== epoch) return;
 
   const enemy = enemyTurn(state); state = enemy.state;
+  if(enemy.event.damage) sound.play(enemy.event.blocked?'block':enemy.event.earthquake?'earthquake':phase==='heavy'?'heavy':state.chapter===6?'ghost':enemy.event.stolenHealth?'tendrils':'hit');
   if (enemy.event.rescued) saveProgress('battle');
 
   if (enemy.event.damage) {
@@ -310,6 +332,7 @@ async function act(action) {
   if (state.status === 'lost') { finish(); return; }
 
   if (enemy.event.stunned) {
+    sound.play('stun');
     announce('STUNNED - opening lost'); pose('hero','hurt');
     $('heroSprite').classList.add('stunned');
     log(state.chapter === 1 ? 'The tremor breaks your concentration. Your next turn is lost; the guardian closes its core while you recover.' : `The earthquake breaks your concentration. Your next turn is lost; Muirat rebuilds ${enemy.event.armorRestored} Void Armour while you recover.`);
@@ -323,6 +346,8 @@ async function act(action) {
 }
 
 function reset() {
+
+  sound.stop();
 
   epoch++; closeGateOath(); closeGrace(); state = fresh(state.chapter, entryHp, state); busy = false; auto = false; $('result').hidden = true;
 
@@ -360,7 +385,7 @@ $('watch').onclick = () => {
 
 document.addEventListener('keydown', event => {
 
-  if (screen !== 'battle' || event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+  if (screen !== 'battle' || event.target.closest('.audio-controls') || event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
 
   const action = ['strike', 'shield', 'wave', 'relic', 'interrupt'][Number(event.key) - 1];
 
@@ -635,6 +660,7 @@ updateContinue();
 
 
 function showGrace() {
+  sound.play('grace');
   $('renovaCameo').hidden = false;
   $('battleGame').inert = true;
   $('acceptGrace').focus({preventScroll:true});
