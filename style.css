@@ -199,3 +199,6 @@ body.in-prologue{overflow:hidden}
 .audio-controls input{width:100%;accent-color:#7ed9e1}
 .audio-controls :focus-visible{outline:2px solid #f6d18a;outline-offset:3px}
 body{padding-bottom:50px}
+.audio-controls>div{max-height:calc(100dvh - 90px);overflow-y:auto}
+.audio-controls hr{width:100%;border:0;border-top:1px solid #638592;margin:0}
+.audio-controls small{font-size:12px;line-height:1.4;color:#b9cdd5}

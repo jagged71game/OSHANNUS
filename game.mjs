@@ -1,13 +1,23 @@
 import { fresh, actions, allowed, playerTurn, enemyTurn, choose, chapters, checkpoint, readCheckpoint, nextChapter } from './battle.mjs';
 import { createSound } from './audio.mjs';
+import { createMusic } from './music.mjs';
 
 const sound=createSound();
+const music=createMusic();
 const audioControls=document.createElement('details');
 audioControls.className='audio-controls';
 audioControls.innerHTML='<summary>Sound</summary><div><button id="soundToggle" type="button"></button><label for="soundVolume">Effects volume</label><input id="soundVolume" type="range" min="0" max="100" step="5"><button id="soundTest" type="button">Test sound</button></div>';
 document.body.append(audioControls);
+audioControls.querySelector('div').insertAdjacentHTML('beforeend','<hr><button id="musicToggle" type="button"></button><label for="musicVolume">Music volume</label><input id="musicVolume" type="range" min="0" max="100" step="5"><small>The Returning Tide · original score</small>');
+const musicToggle=document.getElementById('musicToggle'),musicVolume=document.getElementById('musicVolume');
+function renderMusic(){musicToggle.textContent=music.muted?'Play music':'Mute music';musicToggle.setAttribute('aria-pressed',String(music.muted));musicVolume.value=Math.round(music.volume*100);}
+musicToggle.onclick=()=>{music.setMuted(!music.muted);music.unlock();renderMusic();};
+musicVolume.oninput=()=>{music.setVolume(Number(musicVolume.value)/100);renderMusic();};
+document.addEventListener('pointerdown',()=>music.unlock(),{capture:true});
+document.addEventListener('keydown',()=>music.unlock(),{capture:true});
+renderMusic();
 const soundToggle=document.getElementById('soundToggle'),soundVolume=document.getElementById('soundVolume');
-function renderSound(){soundToggle.textContent=sound.muted?'Unmute effects':'Mute effects';soundToggle.setAttribute('aria-pressed',String(sound.muted));soundVolume.value=Math.round(sound.volume*100);audioControls.querySelector('summary').textContent=sound.muted||sound.volume===0?'Sound: off':'Sound: on';}
+function renderSound(){soundToggle.textContent=sound.muted?'Unmute effects':'Mute effects';soundToggle.setAttribute('aria-pressed',String(sound.muted));soundVolume.value=Math.round(sound.volume*100);audioControls.querySelector('summary').textContent='Sound & music';}
 soundToggle.onclick=()=>{sound.unlock();sound.setMuted(!sound.muted);renderSound();};
 soundVolume.oninput=()=>{sound.setVolume(Number(soundVolume.value)/100);renderSound();};
 document.getElementById('soundTest').onclick=()=>{sound.unlock();sound.play('shield');};
@@ -37,6 +47,8 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 function pose(who, value = 'idle') { $(who + 'Sprite').dataset.pose = value; if (who === 'enemy') $('mirrorSprite').dataset.pose = value; }
 
 function render() {
+
+  music.setScene(screen==='battle'&&state.status==='playing'?(state.chapter===6?'boss':'battle'):'calm');
 
   const c = chapters[state.chapter];
 
@@ -469,6 +481,7 @@ async function enterBattle() {
 }
 
 function returnToTitle() {
+  music.setScene('calm');
 
   introEpoch++; reset(); screen = 'title'; updateContinue(); $('journeyScreen').hidden = true;
 
@@ -555,6 +568,7 @@ function openBattle() {
 }
 
 function showAftermath() {
+  music.setScene('calm');
 
   epoch++; auto = false; busy = false; screen = 'aftermath';
 
@@ -660,6 +674,7 @@ updateContinue();
 
 
 function showGrace() {
+  music.setScene('calm');
   sound.play('grace');
   $('renovaCameo').hidden = false;
   $('battleGame').inert = true;
@@ -667,6 +682,7 @@ function showGrace() {
   return new Promise(resolve => { graceResolve = resolve; });
 }
 function closeGrace() {
+  music.setScene(screen==='battle'&&state.status==='playing'?(state.chapter===6?'boss':'battle'):'calm');
   $('renovaCameo').hidden = true;
   $('battleGame').inert = screen !== 'battle';
   if (graceResolve) { const resolve = graceResolve; graceResolve = null; resolve(); }
@@ -707,6 +723,7 @@ document.querySelectorAll('[name=finalPower]').forEach(input => input.addEventLi
   selectedFinalPower = input.value; $('nextChapter').disabled = false;
 }));
 function showEpilogue() {
+  music.setScene('calm');
   epoch++; auto = false; busy = false; screen = 'epilogue';
   $('battleGame').hidden = true; $('battleGame').inert = true; $('intro').hidden = true;
   $('journeyScreen').hidden = false; $('journeyScreen').className = 'journey-screen epilogue-journey'; document.body.classList.add('in-prologue');
